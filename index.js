@@ -6,7 +6,7 @@ const app = express();
 
 // Enable CORS
 app.use(cors({
-  origin: 'http://localhost:3000',  // Frontend URL
+  origin: 'https://frontend-one-sigma-24.vercel.app',  // Frontend URL
   methods: ['GET', 'POST'],        // Allow only GET and POST requests
   credentials: true,                // Allow cookies to be sent with requests
 }));

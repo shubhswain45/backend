@@ -4,23 +4,25 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-// Enable CORS
-app.use(cors({
-  origin: 'https://frontend-one-sigma-24.vercel.app',  // Frontend URL
-  methods: ['GET', 'POST'],        // Allow only GET and POST requests
-  credentials: true,                // Allow cookies to be sent with requests
-}));
-
 // Middleware to parse cookies
 app.use(cookieParser());
 
+// Check if the app is in production to set secure cookies
+
+// Enable CORS with credentials and appropriate origin
+app.use(cors({
+  origin: 'https://frontend-one-sigma-24.vercel.app',  // Replace with your Vercel frontend URL
+  methods: ['GET', 'POST'],
+  credentials: true,  // Allow cookies to be sent with requests
+}));
+
 // Route to set a cookie
 app.get('/set-cookie', (req, res) => {
-  // Setting a simple cookie
   res.cookie('username', 'JohnDoe', {
-    maxAge: 24 * 60 * 60 * 1000, // Cookie expiration time (1 day)
-    httpOnly: true,              // Makes the cookie inaccessible to JavaScript
-    secure: true,               // Set to true if using HTTPS
+    maxAge: 24 * 60 * 60 * 1000, // Cookie expires in 1 day
+    httpOnly: true,              // Prevents access via JavaScript
+    secure: true,       // Only secure cookies in production (HTTPS)
+    sameSite: 'None',            // Required for cross-site cookies
   });
   res.send('Cookie has been set!');
 });
@@ -28,10 +30,14 @@ app.get('/set-cookie', (req, res) => {
 // Route to retrieve the cookie
 app.get('/get-cookie', (req, res) => {
   const username = req.cookies.username;
-  res.send(`Hello, ${username}!`);
+  if (username) {
+    res.send(`Hello, ${username}!`);
+  } else {
+    res.send('No cookie found!');
+  }
 });
 
-// Start the server
+// Start the server on port 4000
 app.listen(4000, () => {
   console.log('Server is running on http://localhost:4000');
 });
